@@ -1,0 +1,40 @@
+{
+  "LOCATIONS": {
+    "ROOT_DIRECTORY": "",
+    "CONFIGURATION_DIRECTORY": "",
+    "WORK_DIRECTORY": "",
+    "DATA_DIRECTORY": "",
+    "OUTPUT_DIRECTORY": "",
+    "HMAC_HASHER_FOLDER_PATH": "",
+    "HMAC_HASHER_CLASS_FILE_PATH": "",
+    "NAME_HMAC_HASHER_INI_FILE_PATH": "",
+    "SSN_HMAC_HASHER_INI_FILE_PATH": ""
+  },
+  "COLUMNS": [
+    {
+      "type": "",
+      "index": null,
+      "col_name": ""
+    },
+    {
+      "type": "",
+      "index": null,
+      "col_name": ""
+    },
+    {
+      "type": "",
+      "index": null,
+      "col_name": ""
+    },
+    {
+      "type": "",
+      "index": null,
+      "col_name": ""
+    },
+    {
+      "type": "",
+      "index": null,
+      "col_name": ""
+    }
+  ]
+}
