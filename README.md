@@ -134,3 +134,86 @@ Notes:
 
 - for each separate salt you want to use to hash a set of values (so, if separate salts for first name, last name, and SSN), you'll need to generate a salt value using "`create_salt.ipynb`", then store it in an INI file bsaed on the file "`hmac_hasher/hashing_configuration.ini`".
 - In your INI file, if you will be only using the HMACHasher class for actually hashing values, not processing a file, then you will only need to correctly populate your passphrase in the secret section of these INI files.  The other configuration properties can be omitted.
+
+### Example: HMAC in another language
+
+You should be able to make crypto packages in almost any other language produce the same output for the secret "fakedata" with a little fiddling to figure out exactly what format it needs the secret in. For example, in our library, as an extra bit of security, we encode the secret to utf-8, then convert the encoded secret to a SHA256 hash that we then use as the actual key for the HMAC (example code in Python summarized below), to make sure that even short passphrases result in reasonably long key strings.
+
+To figure out how exactly you can use HMAC in another language not desribed here so that output for a given secret is the same as from these programs, you can start by hashing the values in the CSV file `hmac_hasher/python/hmac_hasher/Fake_Data_Test.csv` using the passphrase "fakedata" (without the surrounding quotes) and comparing the resulting hex digest values to the values below.  This file has 5 rows plus a header row with column names.
+
+To turn the passphrase into the HMAC key, in Python, we do the following:
+
+    # get hasher
+    sha256_instance = hashlib.sha256
+
+    # encode to utf-8, then put the secret in the SHA256 hasher.
+    encoded_passphrase = value_IN.encode( "utf-8" )
+    sha256_instance.update( encoded_passphrase )
+
+    # get hash as digest (byte array)
+    passphrase_hash = sha256_instance.digest()
+
+    # store as key
+    self.hmac_key_hash_instance = sha256_instance
+    self.hmac_key = passphrase_hash
+
+This results in a byte array of the hash of the secret being stored in self.hmac_key, and used as the key with which we initialize the HMAC:
+
+    import hmac
+    hmac_key = self.hmac_key    
+    hmac_instance = hmac.new( hmac_key, encoded_message, digestmod = self.hmac_hash_function )
+    value_OUT = hmac_instance.hexdigest()
+
+The corresponding C# code at `hmac_hasher/c_sharp/Program.cs` that has same output as Python code for a given secret is an example of how code that ensures the secret string you start with results in the same hash output for a given string across technologies can differ depending on the implementation of HMAC.
+
+Expected outputs (from hmac_hasher/python/hmac_hasher/hash_tester.py):
+
+    # ==> PK 555555
+    current_results_map = {}
+    current_results_map[ NAME_EXPECTED_SSN ] = "a69ecf70cab21fdc100165faceaf87f04d0b9fb50d4dc627b04d7e5554a38bc0"
+    current_results_map[ NAME_EXPECTED_FNAME ] = "a0c82465bc168bfc72b7e4aab39bfa74debfa4b785f16976eb0248455be03d14"
+    current_results_map[ NAME_EXPECTED_MNAME ] = "e60d8aa3a723832d2b298fd2e415d75c8d1ec1c273573d0480b7233ef8021310"
+    current_results_map[ NAME_EXPECTED_LNAME ] = "70dba5087a8ab6789d53bc26b02e598c31e2701fe5d8b450a9e4fcbe5eaf296b"
+    
+    # add to expected results, associated with PK
+    expected_results[ "555555" ] = current_results_map
+    
+    # ==> PK 10101010
+    current_results_map = {}
+    current_results_map[ NAME_EXPECTED_SSN ] = "5a823abdcc524029e5497e29d65486cf69befc714758b60edf5113748afd79e3"
+    current_results_map[ NAME_EXPECTED_FNAME ] = "f315ed89f0cb43c52b96aae0003b4adfd5cbd61f3fc1a3e72075533eb73332af"
+    current_results_map[ NAME_EXPECTED_MNAME ] = "4c4768fb4c07d15651adb24f9dbd7f036c226cbf0c26cc5232a1738d59a5337f"
+    current_results_map[ NAME_EXPECTED_LNAME ] = "12cfb1171ef0103a81afa8c37414e232e0931e544d6c4ecc599b995312597f38"
+    
+    # add to expected results, associated with PK
+    expected_results[ "10101010" ] = current_results_map
+    
+    # ==> PK 346712
+    current_results_map = {}
+    current_results_map[ NAME_EXPECTED_SSN ] = "5f552e4659d4604b44049cc4a70d82b86c4453a0f4a88d7af2df03e8596ac4ad"
+    current_results_map[ NAME_EXPECTED_FNAME ] = "15a70ba92649d971a4c4b2c68aa98f52527cc29399e25e57e5aa6ae4df41bbad"
+    current_results_map[ NAME_EXPECTED_MNAME ] = "5218afe466a5aedd298e84c8a60a0293f7407cb46ce64f9cc1fe2fd591a35cff"
+    current_results_map[ NAME_EXPECTED_LNAME ] = "8a8afb5eaaa282f6132f88562a4502272c8bfa3514e0327e85d4f76a2b271ced"
+    
+    # add to expected results, associated with PK
+    expected_results[ "346712" ] = current_results_map
+    
+    # ==> PK 987654
+    current_results_map = {}
+    current_results_map[ NAME_EXPECTED_SSN ] = "27becbaca10ec9cf7f2bbb4c0bece17999cad56d2d14fa5282ac2bbc5f7a82ec"
+    current_results_map[ NAME_EXPECTED_FNAME ] = "c4cda429751d60bebdb9624ea19c195bb4111af011524128e30b4854d5104baa"
+    current_results_map[ NAME_EXPECTED_MNAME ] = "c41d324c94ab58469f00c85564fe444d5dc18c3b8c8a83cef9883a37c8889485"
+    current_results_map[ NAME_EXPECTED_LNAME ] = "722b8277d9828ba4537d130ec31611d9104f740c1bdc8311a2086dbdbc78178a"
+    
+    # add to expected results, associated with PK
+    expected_results[ "987654" ] = current_results_map
+    
+    # ==> PK 23232323
+    current_results_map = {}
+    current_results_map[ NAME_EXPECTED_SSN ] = "cc559eb94e32af592d37a9b631a22d7ee320620d24020d59bc56b6019a593ee4"
+    current_results_map[ NAME_EXPECTED_FNAME ] = "2ccae105615b7a58714b580f3d6320b9f7fe7b11463e3a773981a0fb2fdd44b5"
+    current_results_map[ NAME_EXPECTED_MNAME ] = "11acfc917b5b8a25608085a9a9781b60b0ed8ded17fafd73d294a151c364ed81"
+    current_results_map[ NAME_EXPECTED_LNAME ] = "96ccc9b53ef91dc48a6ef634c5d73394b82ea4dbe2d950ea13f6395ad2c2f6b1"
+    
+    # add to expected results, associated with PK
+    expected_results[ "23232323" ] = current_results_map
