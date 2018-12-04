@@ -143,28 +143,48 @@ To figure out how exactly you can use HMAC in another language not desribed here
 
 To turn the passphrase into the HMAC key, in Python, we do the following:
 
+    import hashlib
+    
+    # what is our secret?
+    passphrase = "fakedata"
+
     # get hasher
-    sha256_instance = hashlib.sha256
+    sha256_instance = hashlib.sha256()
 
     # encode to utf-8, then put the secret in the SHA256 hasher.
-    encoded_passphrase = value_IN.encode( "utf-8" )
+    encoded_passphrase = passphrase.encode( "utf-8" )
     sha256_instance.update( encoded_passphrase )
 
     # get hash as digest (byte array)
     passphrase_hash = sha256_instance.digest()
+    print( "digest(): {}".format( passphrase_hash ) )
 
-    # store as key
-    self.hmac_key_hash_instance = sha256_instance
-    self.hmac_key = passphrase_hash
+    # get hash as hexdigest (byte array)
+    passphrase_hash_hex = sha256_instance.hexdigest()
+    print( "hexdigest(): {}".format( passphrase_hash_hex ) )
 
-This results in a byte array of the hash of the secret being stored in self.hmac_key, and used as the key with which we initialize the HMAC:
+Which results in:
+
+    digest(): b'\x8fP\xa1\xb2J\xbc$\xae\xbb\x1bKgt_M\x87v\xff\xebQ\x83\xad\x1e\xbcb\x96\xde\xf1\x0e\x8f1P'
+    hexdigest(): 8f50a1b24abc24aebb1b4b67745f4d8776ffeb5183ad1ebc6296def10e8f3150
+
+The resulting byte array of the hash of the passphrase/secret (from call to `digest()`) is then used as the key with which we initialize the HMAC:
 
     import hmac
-    hmac_key = self.hmac_key    
-    hmac_instance = hmac.new( hmac_key, encoded_message, digestmod = self.hmac_hash_function )
-    value_OUT = hmac_instance.hexdigest()
 
-The corresponding C# code at `hmac_hasher/c_sharp/Program.cs` that has same output as Python code for a given secret is an example of how code that ensures the secret string you start with results in the same hash output for a given string across technologies can differ depending on the implementation of HMAC.
+    # byte array secret and encoded message (each is required)
+    message = "123456789"
+    encoded_message = message.encode( "utf-8" )
+    hmac_key = passphrase_hash
+    hmac_instance = hmac.new( hmac_key, encoded_message, digestmod = hashlib.sha256 )
+    hashed_value = hmac_instance.hexdigest()
+    print( "Hash of {}: {}".format( message, hashed_value )  )
+
+Which results in:
+
+    Hash of 123456789: a69ecf70cab21fdc100165faceaf87f04d0b9fb50d4dc627b04d7e5554a38bc0
+
+The corresponding C# code at `hmac_hasher/c_sharp/Program.cs` that has same output as Python code for a given secret is an example of how code that ensures the secret string you start with results in the same hash output for a given string across technologies can differ depending on the implementation of HMAC.  To get it to work the same, we had to compute a SHA256 hash of the passphrase/secret after converting it to a utf-8-encoded byte array (`sha256.ComputeHash(Encoding.Default.GetBytes(StringIn));`), rather than hashing the encoded string, then outputting the hash as a byte array (...).
 
 Expected outputs (from hmac_hasher/python/hmac_hasher/hash_tester.py):
 
