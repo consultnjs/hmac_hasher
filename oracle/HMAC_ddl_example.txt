@@ -1,0 +1,76 @@
+--- Description --------------------------------------------------------------------------------
+--
+-- This example function takes string input parameters for purpose of returning HMAC256 value 
+-- in Oracle 12c database and higher.  
+--
+--   Parameters: 
+--
+--    <owner>       is the schema object owner, edit as needed 
+--
+--    'l_in_val' is the input string to be encrypted. AL32UTF8 is suggested for unicode input, but
+--         this is depends upon your environment. 
+-- 
+-- 	  'l_key'    is the input string of the hex characters from SHA256 hash of a previously shared secret
+--
+--     the HMAC256 value is returned as varchar2 string
+-- 
+--   Lines preceeded by '--' may be added back in to the function during debugging or working
+--       with test validation data prior to exchange
+--
+--- Usage -------------------------------------------------------------------------------------
+--
+--    select <owner>.adrf_function('my_input_string_for_encryption','<hex string of SHA256-hashed secret>') from dual;
+--
+--- DDL -------------------------------------------------------------------------------------------
+
+CREATE OR REPLACE function <owner>.adrf_function(l_in_val in VARCHAR2,l_key in varchar2) 
+   return VARCHAR2 
+ is
+    --  l_in_val varchar2(2000);
+    --  l_key    varchar2(2000);
+      l_mac   raw(2000);
+   begin
+      l_mac := dbms_crypto.mac (
+         src => UTL_I18N.STRING_TO_RAW (l_in_val, 'AL32UTF8'),      -- converting character message to RAW format
+         typ => 3,                                                  -- type 3 is hmac_sh256
+         key => hextoraw(l_key)                                     -- converting hash key to RAW format      
+      );
+      --dbms_output.put_line('MAC='||(l_mac));       --check output of the HMAC digest, conversion from RAW to char implicit (same as above simple hash) 
+   return lower(l_mac);
+   end;
+/
+
+
+--- Example ----------------------------------------------------------------------------
+--
+--  Using preshared secret string "somethingfunny".
+--
+-- 1) Get SHA256 Hash of the secret: 
+--      (Note:there are many ways to get this value, e.g. openssl or simple SHA256 digest utility; Oracle shown.)
+--
+--   > select DBMS_CRYPTO.HASH( UTL_I18N.STRING_TO_RAW( 'somethingfunny', 'AL32UTF8' ), 4 ) from dual; 
+--   
+--    DBMS_CRYPTO.HASH(UTL_I18N.STRING_TO_RAW('SOMETHINGFUNNY','AL32UTF8'),4)         
+--    --------------------------------------------------------------------------------
+--    14A03454F9B26897C94F6354D35C85D66908F6F6DD5927F15D8AED09A21818A5                
+--    1 row selected.
+--
+--
+--
+-- 2) Plug the SHA256 hash of the pre-shared secret into the above function with the string to be encrypted:
+--
+--   > select <owner>.adrf_function('my_target_string_for_encryption', 
+--            '14A03454F9B26897C94F6354D35C85D66908F6F6DD5927F15D8AED09A21818A5') from dual;
+--
+--     *******.ADRF_FUNCTION('MY_TARGET_STRING_FOR_ENCRYPTION','14A03454F9B26897C94F635
+--     --------------------------------------------------------------------------------
+--     ab34c9aa4c2d01dd2b67e85d56803ac82a351a9fbb5415c16593c646cc89eb38                
+--     1 row selected.
+--
+--     The result is an HMAC256 encrypted string given the preshared secret "somethingfunny".
+--
+--  For greater security, separation of the shared secret, SHA256 hashing of the secret, and
+--   HMAC function calls are desirable.   
+--
+--- -- --------------------------------------------------------------------------------------
+
