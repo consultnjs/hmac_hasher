@@ -57,7 +57,6 @@ public class AppTest
         System.out.println( "- secret: " + secret );
         System.out.println( "- message: " + message );
         System.out.println( "- expected_result: " + expectedResult );
-        System.out.println();
 
         // encoding.
         encoding = "UTF-8";
@@ -68,7 +67,7 @@ public class AppTest
 
         algorithmString = AppTest.testAlgorithmString;
         javaxCryptoDigest = HMACHasher.javaxCryptoHMACDigest( message, secret, algorithmString, encoding );
-        System.out.println( "Built-in output: " + javaxCryptoDigest );
+        System.out.println( "- Static javax.crypto built-in output: " + javaxCryptoDigest );
         assertTrue( javaxCryptoDigest.equals( expectedResult ) == true );
 
     } //-- END method testStaticJavaxCryptoHmac() --//
@@ -99,7 +98,6 @@ public class AppTest
         System.out.println( "- secret: " + secret );
         System.out.println( "- message: " + message );
         System.out.println( "- expected_result: " + expectedResult );
-        System.out.println();
 
         // encoding.
         encoding = "UTF-8";
@@ -111,7 +109,7 @@ public class AppTest
         // try the commons method
         algorithm_instance = AppTest.testAlgorithmInstance;
         commonsDigest = HMACHasher.commonsHMACDigest( message, secret, algorithm_instance, encoding );
-        System.out.println( "Apache Commons codec output: " + commonsDigest );
+        System.out.println( "- Static Apache Commons codec output: " + commonsDigest );
         assertTrue( commonsDigest.equals( expectedResult ) == true );
 
     } //-- END method testStaticApacheCommonsCodecHmac() --//
@@ -124,7 +122,7 @@ public class AppTest
     public void testInstanceApacheCommonsCodecHmac()
     {
         // declare variables
-        String me = "testStaticJavaxCryptoHmac";
+        String me = "testInstanceApacheCommonsCodecHmac";
         String secret = null;
         String message = null;
         String expectedResult = null;
@@ -143,7 +141,6 @@ public class AppTest
         System.out.println( "- secret: " + secret );
         System.out.println( "- message: " + message );
         System.out.println( "- expected_result: " + expectedResult );
-        System.out.println();
 
         // encoding.
         encoding = "UTF-8";
@@ -161,7 +158,7 @@ public class AppTest
 
         // hash a string using apache commons.
         instanceDigest = myHasherInstance.commonsHashString( message, encoding );
-        System.out.println( "Instance Commons codec output: " + instanceDigest );
+        System.out.println( "- Instance Apache Commons codec output: " + instanceDigest );
         assertTrue( instanceDigest.equals( expectedResult ) == true );
 
     } //-- END method testStaticJavaxCryptoHmac() --//
