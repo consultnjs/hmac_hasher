@@ -34,6 +34,7 @@ import glob
 import hashlib
 import six
 import uuid
+import os
 
 print( "Imports imported at " + str( datetime.datetime.now() ) )
 
@@ -45,7 +46,7 @@ print( "Imports imported at " + str( datetime.datetime.now() ) )
 # In[ ]:
 
 
-pwd
+os.getcwd()
 
 
 # In[ ]:
@@ -90,12 +91,9 @@ hmac_hasher_folder_path = work_directory + path_separator + "hmac_hasher"
 hmac_hasher_class_file_path = hmac_hasher_folder_path + path_separator + "hmac_hasher.py"
 
 
-# Use the "%run" command to run the Python file that defines the HMACHasher class and load the class into memory.
+# Unlike the python notebook, we will execute the  `hmac_hasher_class_file_path` file to load its methods to the global context.
 
-# In[ ]:
-
-
-get_ipython().run_line_magic('run', '$hmac_hasher_class_file_path')
+exec(open(hmac_hasher_class_file_path).read(), globals())
 
 print( "HMACHasher class imported from {} at {}".format( hmac_hasher_class_file_path, str( datetime.datetime.now() ) ) )
 
