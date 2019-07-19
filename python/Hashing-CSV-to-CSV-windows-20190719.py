@@ -273,10 +273,20 @@ file_year = ""
 file_quarter = ""
 
 # file details - indexes start at 0.
-index_ssn = 1
-index_first_name = 2
-index_middle_name = 3
-index_last_name = 4
+index_given = 
+index_family =
+index_month = 
+index_year = 
+index_complete = 
+index_given_nickname = 
+index_given_first_word = 
+index_given_middle_initial = 
+index_given_all_but_first = 
+index_given_all_but_final = 
+index_given_final_initial = 
+index_given_final_wordindex = 
+
+
 
 # declare variables - process each file
 #path_separator = None
@@ -292,14 +302,32 @@ output_csv_writer = None
 current_record = None
 
 # values from record
-ssn_value = ""
-first_name_value = ""
-middle_name_value = ""
-last_name_value = ""
-hashed_ssn = ""
-hashed_first_name = ""
-hashed_middle_name = ""
-hashed_last_name = ""
+given_value = ""
+family_value = ""
+month_value = ""
+year_value = ""
+complete_value = ""
+given_nickname_value = ""
+given_first_word_value = ""
+given_middle_initial_value = ""
+given_all_but_first_value = ""
+given_all_but_final_value = ""
+given_final_initial_value = ""
+given_final_wordindex_value = ""
+
+hashed_given = ""
+hashed_family = ""
+hashed_month = ""
+hashed_year = ""
+hashed_complete = ""
+hashed_given_nickname = ""
+hashed_given_first_word = ""
+hashed_given_middle_initial = ""
+hashed_given_all_but_first = ""
+hashed_given_all_but_final = ""
+hashed_given_final_initial = ""
+hashed_given_final_wordindex = ""
+
 row_value_list = []
 
 # first get list of *.csv files in directory.
@@ -349,14 +377,6 @@ for file_path in file_list:
 
             # loop over records
             for current_record in input_csv_reader:
-                
-                # initialize values
-                ein_value = ""
-                business_name_value = ""
-                business_name_2_value = ""
-                hashed_ein = ""
-                hashed_business_name = ""
-                hashed_business_name_2 = ""
 
                 # initialize output list with copy of input list
                 row_value_list = copy.copy( current_record )
@@ -366,61 +386,178 @@ for file_path in file_list:
 
                 # get values (check if positions are correct)
                 
-                # got an SSN list index?
-                if ( index_ssn is not None ):
+                # got an given name list index?
+                if ( index_given is not None ):
 
                     # we have an index.  Get value...
-                    ssn_value = current_record[ index_ssn ]
+                    given_value = current_record[ index_given ]
                     
                     # ...hash...
-                    hashed_ssn = hash_ssn( ssn_value )
+                    hashed_given = hash_name( given_value )
                     
                     # ...and store in output row.
-                    row_value_list[ index_ssn ] = hashed_ssn
+                    row_value_list[ index_given ] = hashed_given
                     
-                #-- END check to see if SSN index. --#
+                #-- END check to see if given name index. --#
 
-                # got a last name list index?
-                if ( index_last_name is not None ):
+                # got a family name list index?
+                if ( index_family is not None ):
 
                     # we have an index.  Get value...
-                    last_name_value = current_record[ index_last_name ]
+                    family_value = current_record[ index_family ]
                     
                     # ...hash...
-                    hashed_last_name = hash_name( last_name_value )
+                    hashed_family = hash_name( family_value )
                     
                     # ...and store in output row.
-                    row_value_list[ index_last_name ] = hashed_last_name
+                    row_value_list[ index_family ] = hashed_family
                     
-                #-- END check to see if last name index. --#
+                #-- END check to see if family name index. --#
 
-                # got a first name list index?
-                if ( index_first_name is not None ):
+                # got a month list index?
+                if ( index_month is not None ):
 
                     # we have an index.  Get value...
-                    first_name_value = current_record[ index_first_name ]
+                    month_value = current_record[ index_month ]
                     
                     # ...hash...
-                    hashed_first_name = hash_name( first_name_value )
+                    hashed_month = hash_name( month_value )
                     
                     # ...and store in output row.
-                    row_value_list[ index_first_name ] = hashed_first_name
+                    row_value_list[ index_month ] = hashed_month
                     
-                #-- END check to see if first name index. --#
+                #-- END check to see if month index. --#
                 
-                # got a middle name list index?
-                if ( index_middle_name is not None ):
+                # got a year list index?
+                if ( index_year is not None ):
 
                     # we have an index.  Get value...
-                    middle_name_value = current_record[ index_middle_name ]
+                    year_value = current_record[ index_year ]
                     
                     # ...hash...
-                    hashed_middle_name = hash_name( middle_name_value )
+                    hashed_year = hash_name( year_value )
                     
                     # ...and store in output row.
-                    row_value_list[ index_middle_name ] = hashed_middle_name
+                    row_value_list[ index_year ] = hashed_year
+                #-- END check to see if year  index. --#
+
+
+                # got an complete list index?
+                if ( index_complete is not None ):
+
+                    # we have an index.  Get value...
+                    complete_value = current_record[ index_complete ]
                     
-                #-- END check to see if middle name index. --#
+                    # ...hash...
+                    hashed_complete = hash_name( complete_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_complete ] = hashed_complete
+                    
+                #-- END check to see if complete index. --#
+
+                # got an given nickname list index?
+                if ( index_given_nickname is not None ):
+
+                    # we have an index.  Get value...
+                    given_nickname_value = current_record[ index_given_nickname ]
+                    
+                    # ...hash...
+                    hashed_given_nickname = hash_name( given_nickname_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_given_nickname ] = hashed_given_nickname
+                    
+                #-- END check to see if given nick index. --#
+                
+                # got an given first word list index?
+                if ( index_given_first_word is not None ):
+
+                    # we have an index.  Get value...
+                    given_first_word_value = current_record[ index_given_first_word ]
+                    
+                    # ...hash...
+                    hashed_given_first_word = hash_name( given_first_word_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_given_first_word ] = hashed_given_first_word
+                    
+                #-- END check to see if given first index. --#
+
+
+                # got an given middle list index?
+                if ( index_given_middle_initial is not None ):
+
+                    # we have an index.  Get value...
+                    given_middle_initial_value = current_record[ index_given_middle_initial ]
+                    
+                    # ...hash...
+                    hashed_given_middle_initial = hash_name( given_middle_initial_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_given_middle_initial ] = hashed_given_middle_initial
+                    
+                #-- END check to see if given middle index. --#
+
+                # got an given all but first list index?
+                if ( index_given_all_but_first is not None ):
+
+                    # we have an index.  Get value...
+                    given_all_but_first_value = current_record[ index_given_all_but_first ]
+                    
+                    # ...hash...
+                    hashed_given_all_but_first = hash_name( given_all_but_first_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_given_all_but_first ] = hashed_given_all_but_first
+                    
+                #-- END check to see if given all but first index. --#
+
+                # got an given all but final list index?
+                if ( index_given_all_but_final is not None ):
+
+                    # we have an index.  Get value...
+                    given_all_but_final_value = current_record[ index_given_all_but_final ]
+                    
+                    # ...hash...
+                    hashed_given_all_but_final = hash_name( given_all_but_final_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_given_all_but_final ] = hashed_given_all_but_final
+                    
+                #-- END check to see if given all but final index. --#
+
+
+                # got an given final initial list index?
+                if ( index_given_final_initial is not None ):
+
+                    # we have an index.  Get value...
+                    given_final_initial_value = current_record[ index_given_final_initial ]
+                    
+                    # ...hash...
+                    hashed_given_final_initial = hash_name( given_final_initial_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_given_final_initial ] = hashed_given_final_initial
+                    
+                #-- END check to see if given final initial index. --#
+
+
+                # got an final wordindex list index?
+                if ( index_given_final_wordindex is not None ):
+
+                    # we have an index.  Get value...
+                    given_final_wordindex_value = current_record[ index_given_final_wordindex ]
+                    
+                    # ...hash...
+                    hashed_given_final_wordindex = hash_name( given_final_wordindex_value )
+                    
+                    # ...and store in output row.
+                    row_value_list[ index_given_final_wordindex ] = hashed_given_final_wordindex
+                    
+                #-- END check to see if final wordindex index. --#
+
+                    
                 
                 # write to output file.
                 output_csv_writer.writerow( row_value_list )
