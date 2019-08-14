@@ -29,18 +29,16 @@
 # In[ ]:
 
 
-CONFIGURATION_FILE_NB_USER_INPUT = "C:\\ABSOLUTE\\PATH\\TO\\config.json"
+import os
 
+CONFIGURATION_FILE_NB_USER_INPUT = os.path.abspath("../process/template/example.json")
 
-# ## Setup - Imports
-# 
-# - Back to [Table of Contents](#Table-of-Contents)
 
 # In[ ]:
 
 
 import copy
-import os
+import sys
 import csv
 import json
 import datetime
@@ -51,6 +49,10 @@ import uuid
 
 print( "Imports imported at " + str( datetime.datetime.now() ) )
 
+
+# ## Setup - Imports
+# 
+# - Back to [Table of Contents](#Table-of-Contents)
 
 # ## Setup - Files and Directories
 # 
@@ -73,12 +75,12 @@ column_conf = configuration['COLUMNS']
 
 
 # can get fancy, for example, all are current directory.
-root_directory = file_conf['ROOT_DIRECTORY']
-configuration_directory = root_directory + file_conf['CONFIGURATION_DIRECTORY']
-work_directory = root_directory + file_conf['WORK_DIRECTORY'] # needs to be a directory that has the hmac_hasher folder that sits alongside this file in the repository inside of it.
-data_directory = root_directory + file_conf['DATA_DIRECTORY']
+# root_directory = file_conf['ROOT_DIRECTORY']
+configuration_directory = file_conf['CONFIGURATION_DIRECTORY']
+work_directory = file_conf['WORK_DIRECTORY'] # needs to be a directory that has the hmac_hasher folder that sits alongside this file in the repository inside of it.
+data_directory = file_conf['DATA_DIRECTORY']
 source_directory = data_directory
-output_directory = root_directory + file_conf['OUTPUT_DIRECTORY']
+output_directory = file_conf['OUTPUT_DIRECTORY']
 
 # variable names used in the code below.
 input_file_directory_path = source_directory
@@ -103,9 +105,10 @@ print(work_directory)
 
 
 # first, load the HMACHasher class.
-hmac_hasher_folder_path = work_directory + file_conf['HMAC_HASHER_FOLDER_PATH']
+hmac_hasher_folder_path = file_conf['HMAC_HASHER_FOLDER_PATH']
 print(hmac_hasher_folder_path)
-hmac_hasher_class_file_path = hmac_hasher_folder_path + file_conf['HMAC_HASHER_CLASS_FILE_PATH']
+hmac_hasher_class_file_path = file_conf['HMAC_HASHER_CLASS_FILE_PATH']
+print(hmac_hasher_class_file_path)
 
 
 # Use the "%run" command to run the Python file that defines the HMACHasher class and load the class into memory.
@@ -129,7 +132,7 @@ print( "HMACHasher class imported from {} at {}".format( hmac_hasher_class_file_
 my_name_hasher = HMACHasher()
 
 # load the passphrase/salt from the configuration file
-name_hmac_hasher_ini_file_path = os.path.join(configuration_directory, file_conf['NAME_HMAC_HASHER_INI_FILE_PATH'])
+name_hmac_hasher_ini_file_path = file_conf['NAME_HMAC_HASHER_INI_FILE_PATH']
 
 # store configuration file path in HMACHasher, then load config.
 my_name_hasher.configuration_ini_file_path = name_hmac_hasher_ini_file_path
@@ -158,7 +161,7 @@ print( "HMACHasher instances created at " + str( datetime.datetime.now() ) )
 
 
 # test hashing a value.
-expected_value = "fb113dfceffe330a6d8d508a675b96127fcc392b249d5973e27f5d25a99626e2"
+expected_value = "2990abf7de79499d1869bef3d1af456c0f24abfb85e7348a59d99ce6a8962ae5"
 
 # with other than the example secret, on first run, this will not match.  To test:
 # - Copy value from first run into expected_value, above.
@@ -183,7 +186,7 @@ print( "Equal to expected?: " + str( expected_value == test_hash ) )
 my_ssn_hasher = HMACHasher()
 
 # load the passphrase/salt from the configuration file
-ssn_hmac_hasher_ini_file_path = os.path.join(configuration_directory, file_conf['SSN_HMAC_HASHER_INI_FILE_PATH'])
+ssn_hmac_hasher_ini_file_path = file_conf['SSN_HMAC_HASHER_INI_FILE_PATH']
 
 # store configuration file path in HMACHasher, then load config.
 my_ssn_hasher.configuration_ini_file_path = ssn_hmac_hasher_ini_file_path
@@ -212,7 +215,7 @@ print( "HMACHasher instances created at " + str( datetime.datetime.now() ) )
 
 
 # test hashing a value.
-expected_value = "fb113dfceffe330a6d8d508a675b96127fcc392b249d5973e27f5d25a99626e2"
+expected_value = "f20444b7c321517ac2b4c73af8de3bc888ddee0980d52cf5c3ec9f348c670192"
 
 # with other than the example secret, on first run, this will not match.  To test:
 # - Copy value from first run into expected_value, above.
@@ -293,7 +296,7 @@ file_year = ""
 file_quarter = ""
 
 # declare variables - process each file
-path_separator = "\\"
+path_separator = "/"
 input_file = ""
 input_file_encoding = "utf-8"
 has_header_row = True
@@ -329,7 +332,7 @@ for file_path in file_list:
     output_file = output_file_directory_path + "hashed-" + file_name
 
     # open the output file for writing.
-    with open( output_file, "w" ) as hash_output_file:
+    with open( output_file, "w", newline = '') as hash_output_file:
 
         # init CSV writer.
         output_csv_writer = csv.writer( hash_output_file, delimiter = "," )
@@ -370,8 +373,10 @@ for file_path in file_list:
                     hashed_curr_value = ''
                     if conf_item['type'] == 'ssn':
                         hashed_curr_value = hash_ssn( curr_value )
-                    if conf_item['type'] == 'name':
+                    elif conf_item['type'] == 'name':
                         hashed_curr_value = hash_name( curr_value )
+                    else:
+                        sys.exit("Check configuration file at: {}. Incorrect type provided - {}".format(CONFIGURATION_FILE_NB_USER_INPUT, conf_item['type']))
                     
                     # write value to same location in copied row
                     row_value_list[ curr_index ] = hashed_curr_value

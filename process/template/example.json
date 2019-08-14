@@ -1,0 +1,35 @@
+{
+  "LOCATIONS": {
+    "ROOT_DIRECTORY": "./",
+    "CONFIGURATION_DIRECTORY": "./examples",
+    "WORK_DIRECTORY": "./",
+    "DATA_DIRECTORY": "./examples",
+    "OUTPUT_DIRECTORY": "./",
+    "HMAC_HASHER_FOLDER_PATH": "./hmac_hasher",
+    "HMAC_HASHER_CLASS_FILE_PATH": "./hmac_hasher/hmac_hasher.py",
+    "NAME_HMAC_HASHER_INI_FILE_PATH": "./examples/name_hashing_configuration.ini",
+    "SSN_HMAC_HASHER_INI_FILE_PATH": "./examples/ssn_hashing_configuration.ini"
+  },
+  "COLUMNS": [
+    {
+      "type": "ssn",
+      "index": 1,
+      "col_name": "SSN"
+    },
+    {
+      "type": "name",
+      "index": 2,
+      "col_name": "FNAME"
+    },
+    {
+      "type": "name",
+      "index": 3,
+      "col_name": "MNAME"
+    },
+    {
+      "type": "name",
+      "index": 4,
+      "col_name": "LNAME"
+    }
+  ]
+}
