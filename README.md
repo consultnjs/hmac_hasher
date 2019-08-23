@@ -38,6 +38,8 @@ For C#, includes a basic class that implements HMAC Hashing so that it returns s
 
 - `/c_sharp` - contains a C# project with code that can be used to generate hash values that correspond to those from the Python code above when the same salt/secret is used.
 
+- `java` - contains a Java project with code that can be used to generate hash values that correspond to those from the Python code above when the same salt/secret is used.
+
 ## Creating a secret/salt
 
 To create salts/secrets, you can use the code in either "`examples/create_salt.ipynb`" or "`examples/create_salt.py`" (the code itself is identical).
